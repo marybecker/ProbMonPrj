@@ -1,4 +1,4 @@
-#Probability-Based Survey Design for Connecticut Wadeable Streams Project
+#Connecticut Wadeable Streams Probability-Based Surveys Project
 * R Version 3.2.5
 * Platform: x86_64-pc-linux-gnu (64-bit)
 * spsurvey, ggplot2, grid, gridExtra, plyr, reshape2
@@ -34,7 +34,7 @@ for further exploration. Select results are presented.
 
 **Data:**  ProbMonDesign_2001_2015_022417 - Includes prob mon design information, such as weights, needed for population estimates.  Also includes water chemistry, categorical biological WQ values and biological metrics.
 
-**Description of Statistical Methods:** Population estimates are based on samples from eachstream and use weighted Horvitz-Thompson estimation. We used the local mean variance estimatorto develop confidence intervals around the population estimates. Computations were conductedusing the spsurvey package in R.
+**Description of Statistical Methods:** Population estimates are based on samples from each stream and use weighted Horvitz-Thompson estimation. We used the local mean variance estimatorto develop confidence intervals around the population estimates. Computations were conductedusing the spsurvey package in R.
 
 
 
