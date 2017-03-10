@@ -22,9 +22,11 @@ for further exploration. Select results are presented.
 
 **Sample frame:**  2001 – 2005 survey used US EPA’s Reach File Version 3 (RF3) 1:100,000 scale with reaches coded as perennial.   2006 – 2010 and 2011 - 2015 surveys used the National Hydrography Dataset (NHD) Flowline 1:24,000 scale with reaches coded as perennial.
 
-2001 – 2005 – Total stream length (km) = 9931.3570*
-2006 – 2010 – Total stream length (km) = 12508.5465
-2011 – 2015 – Total stream length (km) = 12508.5465
+* 2001 – 2005 – Total stream length (km) = 9931.3570*
+* 2006 – 2010 – Total stream length (km) = 12508.5465
+* 2011 – 2015 – Total stream length (km) = 12508.5465
+
+*Total stream length is different from other surveys because a different GIS layer was used.
 
 **Survey Design:**  2001 – 2005 used geographically stratified hex-design for a linear continuous network with probability based on stream length in hex and over-sample.  Later surveys used Generalized Random Tessellation Stratified (GRTS) (Stevens and Olsen, 2004) for a linear continuous network with equal probability and over-sample.
 
