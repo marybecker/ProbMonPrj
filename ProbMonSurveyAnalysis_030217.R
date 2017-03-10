@@ -1,4 +1,7 @@
-setwd("/Volumes/LINUX/ProbMon/022417")
+##########CT Probabalistically-Based Stream Survey Project#############
+
+setwd()##Set working directory
+
 library(spsurvey)
 library(ggplot2)
 library(grid)
