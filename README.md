@@ -1,4 +1,4 @@
-#Probablistic Monitoring Project
+#Probability-Based Survey Design for Connecticut Wadeable Streams Project
 * R Version 3.2.5
 * Platform: x86_64-pc-linux-gnu (64-bit)
 * spsurvey, ggplot2, grid, gridExtra, plyr, reshape2
