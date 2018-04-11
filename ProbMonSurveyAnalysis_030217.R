@@ -1,6 +1,6 @@
 ##########CT Probabalistically-Based Stream Survey Project#############
 
-setwd()##Set working directory
+setwd("P:/Projects/GitHub_Prj/ProbMonPrj")##Set working directory
 
 library(spsurvey)
 library(ggplot2)
@@ -10,7 +10,10 @@ library(plyr)
 library(reshape2)
 
 # Read data
-data <- read.table("ProbMonDesign_2001_2015_022417.csv",sep=",",header=TRUE)
+data <- read.table("data/ProbMonDesign_2001_2015_041118.csv",sep=",",header=TRUE)
+data$BugBCG<-as.character(data$BugBCG)
+data$BugBCG[data$BugBCG=="6"]<-"5"###Replace 6 with 5 All Impaired Few 6s
+data$BugBCG<-factor(data$BugBCG,levels=c("2","3","4","5"))
 dim(data)
 data[1:10,]
 
@@ -85,6 +88,32 @@ AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Categor
                         theme_bw()+
                         theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
                           legend.background=element_rect(fill=alpha("transparent",0)))
+
+######### Estimate assessment decision based on Macro-Invert BCG data (2,3,4,5 or 6)#########
+
+sites.bcg<- data.frame(siteID=Sdata$SITEID, Use=Sdata$BugBCG=="2"| Sdata$BugBCG=="3"| 
+                          Sdata$BugBCG=="4"|Sdata$BugBCG=="5")
+data.assess <- data.frame(siteID=Sdata$SITEID,Assessment=Sdata$BugBCG)
+AssessmentExtent <- cat.analysis(sites.bugs, subpop, design, data.assess,popsize=list
+                                 (Survey=as.list(framesize)))
+AssessmentExtent
+Assessment<-AssessmentExtent[c(1:2,4:6,8:10),]
+AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessment",
+                      Category="Ambiguous",NResp=0,
+                      Estimate.P=0,StdError.P=0,LCB95Pct.P=0,UCB95Pct.P=0,Estimate.U=0,
+                      StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
+Assessment<- rbind(Assessment,AddAmbig)
+
+AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
+  geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
+           width=0.7)+
+  geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
+                position=position_dodge(0.7))+
+  scale_fill_manual(values=c("grey","darkseagreen","deepskyblue4"))+
+  labs(x= "Survey",y="Estimated Proportion of Stream Length")+
+  theme_bw()+
+  theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
+        legend.background=element_rect(fill=alpha("transparent",0)))
 
 ######### Estimate CDF of Chem and Cont Bio Data#########
 
