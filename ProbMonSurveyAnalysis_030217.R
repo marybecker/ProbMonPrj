@@ -1,6 +1,6 @@
 ##########CT Probabalistically-Based Stream Survey Project#############
 
-setwd("P:/Projects/GitHub_Prj/ProbMonPrj")##Set working directory
+setwd("/Users/tbecker/Documents/Projects/GitHubProjects/ProbMonPrj")##Set working directory
 
 library(spsurvey)
 library(ggplot2)
@@ -11,9 +11,7 @@ library(reshape2)
 
 # Read data
 data <- read.table("data/ProbMonDesign_2001_2015_041118.csv",sep=",",header=TRUE)
-data$BugBCG<-as.character(data$BugBCG)
-data$BugBCG[data$BugBCG=="6"]<-"5"###Replace 6 with 5 All Impaired Few 6s
-data$BugBCG<-factor(data$BugBCG,levels=c("2","3","4","5"))
+data$BugBCG[data$BugBCG=="BCG6"]<-"BCG5"###Replace 6 with 5 All Impaired Few 6s
 dim(data)
 data[1:10,]
 
@@ -78,7 +76,7 @@ AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessm
                       StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
 Assessment<- rbind(Assessment,AddAmbig)
 
-AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
+AssessmentPlotMMI<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
                         geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
                                  width=0.7)+
                         geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
@@ -89,31 +87,30 @@ AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Categor
                         theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
                           legend.background=element_rect(fill=alpha("transparent",0)))
 
+ggsave("results/PassFailAssessment.JPG")
+
 ######### Estimate assessment decision based on Macro-Invert BCG data (2,3,4,5 or 6)#########
 
-sites.bcg<- data.frame(siteID=Sdata$SITEID, Use=Sdata$BugBCG=="2"| Sdata$BugBCG=="3"| 
-                          Sdata$BugBCG=="4"|Sdata$BugBCG=="5")
+sites.bcg<- data.frame(siteID=Sdata$SITEID, Use=Sdata$BugBCG=="BCG2"| Sdata$BugBCG=="BCG3"| 
+                          Sdata$BugBCG=="BCG4"|Sdata$BugBCG=="BCG5")
 data.assess <- data.frame(siteID=Sdata$SITEID,Assessment=Sdata$BugBCG)
-AssessmentExtent <- cat.analysis(sites.bugs, subpop, design, data.assess,popsize=list
+AssessmentExtent <- cat.analysis(sites.bcg, subpop, design, data.assess,popsize=list
                                  (Survey=as.list(framesize)))
 AssessmentExtent
-Assessment<-AssessmentExtent[c(1:2,4:6,8:10),]
-AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessment",
-                      Category="Ambiguous",NResp=0,
-                      Estimate.P=0,StdError.P=0,LCB95Pct.P=0,UCB95Pct.P=0,Estimate.U=0,
-                      StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
-Assessment<- rbind(Assessment,AddAmbig)
+Assessment<-AssessmentExtent[c(1:4,6:9),]
 
 AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
   geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
            width=0.7)+
   geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
                 position=position_dodge(0.7))+
-  scale_fill_manual(values=c("grey","darkseagreen","deepskyblue4"))+
+  scale_fill_manual(values=c("grey","darkseagreen","deepskyblue4","blue"))+
   labs(x= "Survey",y="Estimated Proportion of Stream Length")+
   theme_bw()+
   theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
         legend.background=element_rect(fill=alpha("transparent",0)))
+
+ggsave("results/BCGPlot.JPG")
 
 ######### Estimate CDF of Chem and Cont Bio Data#########
 
