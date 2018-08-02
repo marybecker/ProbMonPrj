@@ -10,8 +10,9 @@ library(plyr)
 library(reshape2)
 
 # Read data
-data <- read.table("data/ProbMonDesign_2001_2015_041118.csv",sep=",",header=TRUE)
+data <- read.table("data/ProbMonDesign_2001_2015_080118.csv",sep=",",header=TRUE)
 data$BugBCG[data$BugBCG=="BCG6"]<-"BCG5"###Replace 6 with 5 All Impaired Few 6s
+data$FishBCG[data$FishBCG=="BCG6"]<-"BCG5"
 dim(data)
 data[1:10,]
 
@@ -111,6 +112,30 @@ AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Categor
         legend.background=element_rect(fill=alpha("transparent",0)))
 
 ggsave("results/BCGPlot.JPG")
+
+######### Estimate assessment decision based on Fish BCG data (2,3,4,5 or 6)#########
+
+sites.fishbcg<- data.frame(siteID=Sdata$SITEID, Use=Sdata$FishBCG=="BCG1" | 
+                             Sdata$FishBCG=="BCG2"| Sdata$FishBCG=="BCG3"| 
+                         Sdata$FishBCG=="BCG4"|Sdata$FishBCG=="BCG5")
+data.assess <- data.frame(siteID=Sdata$SITEID,Assessment=Sdata$FishBCG)
+AssessmentExtent <- cat.analysis(sites.fishbcg, subpop, design, data.assess,popsize=list
+                                 (Survey=as.list(framesize)))
+AssessmentExtent
+Assessment<-AssessmentExtent[c(1:5,7:11,13:17),]
+
+AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
+  geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
+           width=0.7)+
+  geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
+                position=position_dodge(0.7))+
+  scale_fill_manual(values=c("grey","darkseagreen","deepskyblue4","blue","green"))+
+  labs(x= "Survey",y="Estimated Proportion of Stream Length")+
+  theme_bw()+
+  theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
+        legend.background=element_rect(fill=alpha("transparent",0)))
+
+ggsave("results/BCGFishPlot.JPG")
 
 ######### Estimate CDF of Chem and Cont Bio Data#########
 
