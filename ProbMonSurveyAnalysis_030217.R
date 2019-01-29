@@ -1,6 +1,6 @@
 ##########CT Probabalistically-Based Stream Survey Project#############
 
-setwd("/Users/tbecker/Documents/Projects/GitHubProjects/ProbMonPrj")##Set working directory
+setwd("P:/Projects/GitHub_Prj/ProbMonPrj")##Set working directory
 
 library(spsurvey)
 library(ggplot2)
