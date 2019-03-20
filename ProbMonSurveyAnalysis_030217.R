@@ -1,6 +1,6 @@
 ##########CT Probabalistically-Based Stream Survey Project#############
 
-setwd("P:/Projects/GitHub_Prj/ProbMonPrj")##Set working directory
+setwd("/home/mkozlak/Documents/Projects/GitHub/ProbMonPrj")##Set working directory
 
 library(spsurvey)
 library(ggplot2)
@@ -10,7 +10,7 @@ library(plyr)
 library(reshape2)
 
 # Read data
-data <- read.table("data/ProbMonDesign_2001_2015_080118.csv",sep=",",header=TRUE)
+data <- read.table("data/ProbMonDesign_2001_2015_032019.csv",sep=",",header=TRUE)
 data$BugBCG[data$BugBCG=="BCG6"]<-"BCG5"###Replace 6 with 5 All Impaired Few 6s
 data$FishBCG[data$FishBCG=="BCG6"]<-"BCG5"
 dim(data)
@@ -70,19 +70,19 @@ data.assess <- data.frame(siteID=Sdata$SITEID,Assessment=Sdata$BugAssess)
 AssessmentExtent <- cat.analysis(sites.bugs, subpop, design, data.assess,popsize=list
                                  (Survey=as.list(framesize)))
 AssessmentExtent
-Assessment<-AssessmentExtent[c(1:2,4:6,8:10),]
-AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessment",
-                      Category="Ambiguous",NResp=0,
-                      Estimate.P=0,StdError.P=0,LCB95Pct.P=0,UCB95Pct.P=0,Estimate.U=0,
-                      StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
-Assessment<- rbind(Assessment,AddAmbig)
+Assessment<-AssessmentExtent[AssessmentExtent$Category=='Pass'|AssessmentExtent$Category=='Fail',]
+#AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessment",
+                      #Category="Ambiguous",NResp=0,
+                      #Estimate.P=0,StdError.P=0,LCB95Pct.P=0,UCB95Pct.P=0,Estimate.U=0,
+                      #StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
+#Assessment<- rbind(Assessment,AddAmbig)
 
 AssessmentPlotMMI<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
                         geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
                                  width=0.7)+
                         geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
                                       position=position_dodge(0.7))+
-                        scale_fill_manual(values=c("grey","darkseagreen","deepskyblue4"))+
+                        scale_fill_manual(values=c("darkseagreen","deepskyblue4"))+
                         labs(x= "Survey",y="Estimated Proportion of Stream Length")+
                         theme_bw()+
                         theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
@@ -345,3 +345,32 @@ for(i in 1:n){
   j <- j+1
 }
 
+
+######### Estimate assessment decision based on Bug or Fish BCG data (1 - 4 p/ 5- 6 f)########
+
+sites.bugs<- data.frame(siteID=Sdata$SITEID, Use=Sdata$FishAssessBCG=="Pass"| Sdata$FishAssessBCG=="Fail")
+data.assess <- data.frame(siteID=Sdata$SITEID,Assessment=Sdata$FishAssessBCG)
+AssessmentExtent <- cat.analysis(sites.bugs, subpop, design, data.assess,popsize=list
+                                 (Survey=as.list(framesize)))
+AssessmentExtent
+Assessment<-AssessmentExtent[AssessmentExtent$Category=='Pass'|AssessmentExtent$Category=='Fail',]
+#AddAmbig<- data.frame(Type="Survey",Subpopulation="2001-2005",Indicator="Assessment",
+#Category="Ambiguous",NResp=0,
+#Estimate.P=0,StdError.P=0,LCB95Pct.P=0,UCB95Pct.P=0,Estimate.U=0,
+#StdError.U=0,LCB95Pct.U=0,UCB95Pct.U=0)#Pad Ambig data to give plot equal bar width
+#Assessment<- rbind(Assessment,AddAmbig)
+
+AssessmentPlot<- ggplot(Assessment,aes(x=Subpopulation,y=Estimate.P,fill=Category))+
+  geom_bar(position=position_dodge(),stat="identity",colour="black",size=0.3,
+           width=0.7)+
+  geom_errorbar(aes(ymin=LCB95Pct.P,ymax=UCB95Pct.P),width=0.2,
+                position=position_dodge(0.7))+
+  scale_fill_manual(values=c("darkseagreen","deepskyblue4"))+
+  labs(x= "Survey",y="Estimated Proportion of Stream Length")+
+  theme_bw()+
+  theme(legend.position=c(0.12,0.85),legend.title=element_blank(),
+        legend.background=element_rect(fill=alpha("transparent",0)))
+
+AssessmentPlot
+
+ggsave("results/FishBCGPassFailAssessment.JPG")
