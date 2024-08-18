@@ -1,4 +1,4 @@
-##########CT Probabalistically-Based Stream Survey Project#############
+##########CT Probabalistic-Based Stream Survey Project#############
 
 setwd("/home/mkozlak/Documents/Projects/GitHub/ProbMonPrj")##Set working directory
 
