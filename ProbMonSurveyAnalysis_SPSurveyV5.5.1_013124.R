@@ -7,6 +7,7 @@ library(ggplot2)
 
 data <- read.csv('data/ProbMonDesign_2001_2020_013124.csv', header = TRUE)
 
+s1 <- data[data$SurveyName == "2001-2005" & data$EVALSTATUS == "CMPLTE",]
 s3 <- data[data$SurveyName == "2011-2015" & data$EVALSTATUS == "CMPLTE",]
 
 a  <- c("Pass","Fail","Ambiguous")
